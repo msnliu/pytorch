@@ -1,13 +1,21 @@
 # Owner(s): ["module: linear algebra"]
 
+import unittest
+
 import torch
 import torch.nn.functional as F
+from torch.testing._internal.common_cuda import SM80OrLater
 from torch.testing._internal.common_device_type import (
     dtypes,
     instantiate_device_type_tests,
     onlyAccelerator,
 )
-from torch.testing._internal.common_utils import parametrize, run_tests, TestCase
+from torch.testing._internal.common_utils import (
+    decorateIf,
+    parametrize,
+    run_tests,
+    TestCase,
+)
 
 
 class TestMatmul(TestCase):
@@ -33,6 +41,10 @@ class TestMatmul(TestCase):
                 self.assertEqual(bgrad, b.grad)
 
     @onlyAccelerator
+    @decorateIf(
+        unittest.skipIf(not SM80OrLater, "Grouped gemm requires SM80+ on CUDA"),
+        lambda params: "cuda" in params["device"],
+    )
     @parametrize("strided", [False, True])
     @parametrize("a_row_major", [False, True])
     @parametrize("b_row_major", [False, True])
@@ -77,6 +89,10 @@ class TestMatmul(TestCase):
         self.grouped_mm_helper(alist, blist, gO, agradlist, bgradlist, out)
 
     @onlyAccelerator
+    @decorateIf(
+        unittest.skipIf(not SM80OrLater, "Grouped gemm requires SM80+ on CUDA"),
+        lambda params: "cuda" in params["device"],
+    )
     @parametrize("strided", [False, True])
     @parametrize("a_row_major", [False, True])
     @parametrize("b_row_major", [False, True])
@@ -141,6 +157,10 @@ class TestMatmul(TestCase):
             self.grouped_mm_helper(alist, b, gOlist, agradlist, bgradlist, outlist)
 
     @onlyAccelerator
+    @decorateIf(
+        unittest.skipIf(not SM80OrLater, "Grouped gemm requires SM80+ on CUDA"),
+        lambda params: "cuda" in params["device"],
+    )
     @parametrize("strided", [False, True])
     @parametrize("a_row_major", [False, True])
     @parametrize("b_row_major", [False, True])
@@ -179,6 +199,10 @@ class TestMatmul(TestCase):
         self.grouped_mm_helper(a, b, gO, a.grad, b.grad, out)
 
     @onlyAccelerator
+    @decorateIf(
+        unittest.skipIf(not SM80OrLater, "Grouped gemm requires SM80+ on CUDA"),
+        lambda params: "cuda" in params["device"],
+    )
     @parametrize("strided", [False, True])
     @parametrize("a_row_major", [False, True])
     @parametrize("b_row_major", [False, True])
