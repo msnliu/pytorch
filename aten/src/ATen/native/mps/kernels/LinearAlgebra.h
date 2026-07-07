@@ -22,7 +22,7 @@ struct UnpackPivotsParams {
   uint32_t dim_size;
 };
 
-struct QrParams {
+struct GeqrfParams {
   uint32_t m;
   uint32_t n;
 };
