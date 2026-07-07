@@ -100,13 +100,23 @@ void initCuptiMonitorBindings(py::module& m) {
   using torch::profiler::impl::CuptiMonitorDecoder;
   cupti_monitor.def(
       "configure_decoder",
-      [](uintptr_t subscriber, uint32_t fence_kind, int fence_end_field) {
+      [](uintptr_t subscriber,
+         uint32_t fence_kind,
+         int fence_end_field,
+         bool self_flush,
+         uint64_t flush_period_ns) {
         CuptiMonitorDecoder::get().configure(
-            subscriber, fence_kind, fence_end_field);
+            subscriber,
+            fence_kind,
+            fence_end_field,
+            self_flush,
+            flush_period_ns);
       },
       py::arg("subscriber"),
       py::arg("fence_kind") = 0,
-      py::arg("fence_end_field") = -1);
+      py::arg("fence_end_field") = -1,
+      py::arg("self_flush") = false,
+      py::arg("flush_period_ns") = 0);
   // Drop noisy runtime/driver records by cbid in the decoder. filters: {kind:
   // (keep_mode, [cbids])} -- keep_mode True keeps only those cbids (driver
   // allowlist), False drops them (runtime blocklist). cbid_field_id is the cbid
