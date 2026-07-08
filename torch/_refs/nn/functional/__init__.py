@@ -1131,7 +1131,8 @@ def gelu(a: TensorLikeType, approximate: str = "none") -> TensorLikeType:
         return 0.5 * a * (1 + torch.tanh(inner))
     elif approximate == "none":
         kAlpha = M_SQRT1_2
-        return a * 0.5 * (1 + torch.erf(a * kAlpha))
+        # erfc(-z) instead of 1 + erf(z): no cancellation for x < 0 (gh-187806)
+        return a * 0.5 * torch.erfc(a * -kAlpha)
     else:
         raise RuntimeError("approximate argument must be either none or tanh.")
 

@@ -2040,6 +2040,9 @@ class TritonOverrides(OpOverrides):
     @staticmethod
     @maybe_upcast_float32()
     def erfc(x):
+        # Triton-CPU's libdevice shim has no erfc; keep the algebraic form there
+        if V.graph.get_current_device_or_throw().type == "cpu":
+            return f"(1.0 - libdevice.erf({x}))"
         return f"libdevice.erfc({x})"
 
     @staticmethod

@@ -711,8 +711,8 @@ Tensor special_sinc(const Tensor& self) { return self.sinc(); }
 namespace {
 
 inline Tensor calc_ndtr(const Tensor& self) {
-  auto x_sqrt_2 = self * M_SQRT1_2;
-  return (1 + at::erf(x_sqrt_2)) * 0.5;
+  // erfc(-z) instead of 1 + erf(z): no cancellation for x < 0 (gh-187806)
+  return at::erfc(self * -M_SQRT1_2) * 0.5;
 }
 
 } // namespace
