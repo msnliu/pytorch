@@ -911,10 +911,16 @@ class SymPyValueRangeAnalysis:
 
     @classmethod
     def minimum(cls, a, b):
+        a, b = ValueRanges.wrap(a), ValueRanges.wrap(b)
+        if a.is_bool or b.is_bool:
+            return cls.and_(a, b)
         return cls.min_or_max(a, b, sympy.Min)
 
     @classmethod
     def maximum(cls, a, b):
+        a, b = ValueRanges.wrap(a), ValueRanges.wrap(b)
+        if a.is_bool or b.is_bool:
+            return cls.or_(a, b)
         return cls.min_or_max(a, b, sympy.Max)
 
     @staticmethod
